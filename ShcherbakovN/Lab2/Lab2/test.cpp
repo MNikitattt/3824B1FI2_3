@@ -4,37 +4,64 @@
 
 //Тесты класса TVector:
 
-TEST(Vector, CreateVectorNoThrow) 
+TEST(Vector, CreateVectorWithinAcceptableValues)
 {
 	int s = 20, si = 2;
-	EXPECT_NO_THROW({ //Не вернёт исключение.
-		TVector<ValType> v1; //Конструктор по умолчанию.
-		TVector<ValType> v2(s, si); //Конструктор с параметрами.
-		TVector<ValType> v3(MAX_VECTOR_SIZE, 0); //Граничный случай.
-		TVector<ValType> v4(1, 0); //Граничный случай.
-		});
 
-	EXPECT_NO_THROW({
-		TVector<ValType> v5(si, s); //Размер вектора меньше индекса первого элемента вектора.
-		});
+	TVector<ValType> v1; //Конструктор по умолчанию.
+	EXPECT_EQ(v1.GetSize(), 10);
+	EXPECT_EQ(v1.GetStartIndex(), 0);
+
+	TVector<ValType> v2(s, si); //Конструктор с параметрами.
+	EXPECT_EQ(v2.GetSize(), s);
+	EXPECT_EQ(v2.GetStartIndex(), si);
+
+	TVector<ValType> v3(MAX_VECTOR_SIZE, 0); //Граничный случай.
+	EXPECT_EQ(v3.GetSize(), MAX_VECTOR_SIZE);
+	EXPECT_EQ(v3.GetStartIndex(), 0);
+
+	TVector<ValType> v4(1, 0); //Граничный случай.
+	EXPECT_EQ(v4.GetSize(), 1);
+	EXPECT_EQ(v4.GetStartIndex(), 0);
+
+	TVector<ValType> v5(si, s); //Размер вектора меньше индекса первого элемента вектора.
+	EXPECT_EQ(v5.GetSize(), si);
+	EXPECT_EQ(v5.GetStartIndex(), s);
 
 	s = 30, si = 15;
-	EXPECT_NO_THROW({
-		TVector<ValType> v6(s, si);
-		TVector<ValType> v7(v6); //Конструктор копирования.
-		});
+
+	TVector<ValType> v6(s, si);
+
+	TVector<ValType> v7(v6); //Конструктор копирования.
+	EXPECT_EQ(v7.GetSize(), s);
+	EXPECT_EQ(v7.GetStartIndex(), si);
 }
 
-TEST(Vector, CreateVectorAnyThrow)
+TEST(Vector, CreateVectorBeyondAcceptableValues)
 {
-	//Исключения:
+	//За пределами допустимых значений:
 
 	int s = 15, si = 5;
-	EXPECT_THROW(TVector<ValType> v1(-s, si), std::out_of_range);
-	EXPECT_THROW(TVector<ValType> v2(-s, -si), std::out_of_range);
-	EXPECT_THROW(TVector<ValType> v3(s, -si), std::out_of_range);
-	EXPECT_THROW(TVector<ValType> v4(0, si), std::out_of_range);
-	EXPECT_THROW(TVector<ValType> v5(MAX_VECTOR_SIZE+1, si), std::out_of_range);
+
+	TVector<ValType> v1(-s, si);
+	EXPECT_EQ(v1.GetSize(), 10);
+	EXPECT_EQ(v1.GetStartIndex(), 0);
+
+	TVector<ValType> v2(-s, -si);
+	EXPECT_EQ(v2.GetSize(), 10);
+	EXPECT_EQ(v2.GetStartIndex(), 0);
+
+	TVector<ValType> v3(s, -si);
+	EXPECT_EQ(v3.GetSize(), 10);
+	EXPECT_EQ(v3.GetStartIndex(), 0);
+
+	TVector<ValType> v4(0, si);
+	EXPECT_EQ(v4.GetSize(), 10);
+	EXPECT_EQ(v4.GetStartIndex(), 0);
+
+	TVector<ValType> v5(MAX_VECTOR_SIZE+1, si);
+	EXPECT_EQ(v5.GetSize(), 10);
+	EXPECT_EQ(v5.GetStartIndex(), 0);
 }
 
 TEST(Vector, GetSizeAndStartIndex) {
@@ -271,35 +298,47 @@ TEST(Vector, VectorOperationsWithVectorAnyThrow) {
 
 //Тесты класса TMatrix:
 
-TEST(Matrix, CreateMatrixNoThrow) {
+TEST(Matrix, CreateMatrixWithinAcceptableValues) {
 	int s = 5;
-	EXPECT_NO_THROW({
-		TMatrix<ValType> m1; //Конструктор по умолчанию.
-		TMatrix<ValType> m2(s); //Конструктор с параметром.
-		TMatrix<ValType> m3(MAX_MATRIX_SIZE); //Граничный случай.
-		TMatrix<ValType> m4(1); //Граничный случай.
-		});
+
+	TMatrix<ValType> m1; //Конструктор по умолчанию.
+	EXPECT_EQ(m1.GetSize(), 10);
+
+	TMatrix<ValType> m2(s); //Конструктор с параметром.
+	EXPECT_EQ(m2.GetSize(), s);
+
+	TMatrix<ValType> m3(MAX_MATRIX_SIZE); //Граничный случай.
+	EXPECT_EQ(m3.GetSize(), MAX_MATRIX_SIZE);
+
+	TMatrix<ValType> m4(1); //Граничный случай.
+	EXPECT_EQ(m4.GetSize(), 1);
 
 	s = 10;
-	EXPECT_NO_THROW({
-		TMatrix<ValType> m5(s);
-		ValType elem = 1;
 
-		m5[0][0] = elem; //Изменяем 1 элемент матрицы.
+	TMatrix<ValType> m5(s);
+	ValType elem = 1;
 
-		TMatrix<ValType> m6(m5); //Конструктор копирования.
-		EXPECT_EQ(m6[0][0], elem);
-		});
+	m5[0][0] = elem; //Изменяем 1 элемент матрицы.
+
+	TMatrix<ValType> m6(m5); //Конструктор копирования.
+	EXPECT_EQ(m6.GetSize(), s);
+	EXPECT_EQ(m6[0][0], elem);
 }
 
-TEST(Matrix, CreateMatrixAnyThrow) {
+TEST(Matrix, CreateMatrixBeyondAcceptableValues) {
 
-	//Исключения:
+	//За пределами допустимых значений:
 
 	int s = 5;
-	EXPECT_THROW(TMatrix<ValType> m1(-s), std::out_of_range);
-	EXPECT_THROW(TMatrix<ValType> m2(0), std::out_of_range);
-	EXPECT_THROW(TMatrix<ValType> m2(MAX_MATRIX_SIZE + 1), std::out_of_range);
+
+	TMatrix<ValType> m1(-s);
+	EXPECT_EQ(m1.GetSize(), 10);
+
+	TMatrix<ValType> m2(0);
+	EXPECT_EQ(m2.GetSize(), 10);
+
+	TMatrix<ValType> m3(MAX_MATRIX_SIZE + 1);
+	EXPECT_EQ(m3.GetSize(), 10);
 }
 
 TEST(Matrix, VectorOfVectorsConversionToMatrixNoThrow) {
